@@ -1,0 +1,775 @@
+Here is the complete, single-file code for `index.html`. You can copy and paste this directly into a file named `index.html` in your GitHub repository.
+
+> [!IMPORTANT]
+> **GitHub Pages hosting tip**: To make sure your logo displays correctly when you publish this, upload your `logo.png` image file into the **same folder** (root directory) of your GitHub repository as this `index.html` file.
+
+### Complete `index.html` Code:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tuition Calculator | The Facility Dance Studio</title>
+  
+  <!-- Google Fonts for modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* 
+      =========================================
+      THE FACILITY - BRAND DESIGN SYSTEM
+      =========================================
+      Modify these CSS variables to easily update the color palette
+      and branding elements to match your studio guidelines.
+    */
+    :root {
+      /* Colors */
+      --color-bg-dark: #09090b;          /* Deep rich black */
+      --color-bg-light: #18181b;         /* Charcoal base */
+      --color-card-bg: rgba(24, 24, 27, 0.75); /* Muted card bg with opacity */
+      
+      --color-accent: #00B6CE;           /* High-contrast brand accent (Electric Cyan) */
+      --color-accent-rgb: 0, 182, 206;   /* RGB values for transparency logic */
+      --color-accent-hover: #009cb0;     /* Slightly darker accent hover state */
+      
+      --color-text-primary: #f4f4f5;     /* Main white text */
+      --color-text-secondary: #a1a1aa;   /* Muted grey text */
+      --color-text-dark: #09090b;        /* Text on light backgrounds */
+      
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-border-accent: rgba(0, 182, 206, 0.4);
+      --color-error: #ef4444;            /* Warning / error states */
+      --color-error-bg: rgba(239, 68, 68, 0.1);
+      
+      /* Typography */
+      --font-family-headings: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+      /* UI Styles & Physics */
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 8px;
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --card-glow: 0 10px 40px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 182, 206, 0.05);
+    }
+
+    /* Reset & Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--color-bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(var(--color-accent-rgb), 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(var(--color-accent-rgb), 0.04) 0%, transparent 40%),
+        linear-gradient(180deg, var(--color-bg-dark) 0%, var(--color-bg-light) 100%);
+      background-attachment: fixed;
+      color: var(--color-text-primary);
+      font-family: var(--font-family-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Main Container */
+    .calculator-wrapper {
+      width: 100%;
+      max-width: 480px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Logo Styling */
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px;
+      width: 100%;
+    }
+
+    .studio-logo {
+      max-width: 280px;
+      max-height: 120px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+      transition: var(--transition-smooth);
+    }
+
+    .studio-logo:hover {
+      transform: scale(1.03);
+    }
+
+    /* Sleek fallback Logo if image fails to load */
+    .logo-fallback {
+      font-family: var(--font-family-headings);
+      font-weight: 800;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-text-primary);
+      display: none; /* Controlled by JS onerror */
+      text-align: center;
+      position: relative;
+    }
+
+    .logo-fallback span {
+      color: var(--color-accent);
+      text-shadow: 0 0 10px rgba(var(--color-accent-rgb), 0.5);
+    }
+
+    /* Calculator Card */
+    .calculator-card {
+      background: var(--color-card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--card-glow);
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calculator-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+    }
+
+    .calculator-card:hover {
+      border-color: rgba(var(--color-accent-rgb), 0.2);
+      box-shadow: 0 12px 50px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(var(--color-accent-rgb), 0.08);
+    }
+
+    /* Card Header */
+    .card-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .card-title {
+      font-family: var(--font-family-headings);
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+
+    .card-subtitle {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+    }
+
+    /* Form Layout */
+    .calculator-form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Input Group */
+    .input-group {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: var(--transition-smooth);
+    }
+
+    .input-group:focus-within,
+    .input-group:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .input-group.has-error {
+      border-color: var(--color-error);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.15);
+      animation: shake 0.4s ease-in-out;
+    }
+
+    .group-label-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .group-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .group-title {
+      font-family: var(--font-family-headings);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--color-text-primary);
+    }
+
+    .group-price {
+      font-size: 0.825rem;
+      color: var(--color-accent);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .group-limit {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 8px;
+      border-radius: 20px;
+      align-self: flex-start;
+    }
+
+    /* Premium Quantity Control Interface */
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+    }
+
+    .control-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: calc(var(--radius-sm) - 2px);
+      border: none;
+      background: transparent;
+      color: var(--color-text-primary);
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-smooth);
+    }
+
+    .control-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--color-accent);
+    }
+
+    .control-btn:active:not(:disabled) {
+      transform: scale(0.92);
+    }
+
+    .control-btn:disabled {
+      color: rgba(255, 255, 255, 0.15);
+      cursor: not-allowed;
+    }
+
+    .dance-input {
+      flex: 1;
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--color-text-primary);
+      font-family: var(--font-family-headings);
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-align: center;
+      outline: none;
+      -moz-appearance: textfield; /* Hide default spin buttons */
+    }
+
+    /* Hide spin buttons Chrome/Safari/Edge */
+    .dance-input::-webkit-outer-spin-button,
+    .dance-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Subtotal display under group */
+    .group-subtotal {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      border-top: 1px dashed rgba(255, 255, 255, 0.05);
+      padding-top: 10px;
+    }
+
+    .group-subtotal-val {
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    /* Error Alert text */
+    .error-text {
+      color: var(--color-error);
+      font-size: 0.8rem;
+      margin-top: 4px;
+      display: none;
+      font-weight: 500;
+    }
+
+    /* Live Breakdown Divider */
+    .breakdown-divider {
+      border: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+      margin: 8px 0;
+    }
+
+    /* Bold Highlighted Result Box */
+    .result-container {
+      background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.1) 0%, rgba(var(--color-accent-rgb), 0.02) 100%);
+      border: 1.5px solid rgba(var(--color-accent-rgb), 0.25);
+      box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.05);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .result-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .result-val {
+      font-family: var(--font-family-headings);
+      font-weight: 800;
+      color: var(--color-text-primary);
+    }
+
+    .result-val.annual {
+      font-size: 1.25rem;
+    }
+
+    .result-val.monthly {
+      font-size: 2.25rem;
+      color: var(--color-accent);
+      text-shadow: 0 0 15px rgba(var(--color-accent-rgb), 0.3);
+      line-height: 1.1;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .result-val.monthly span {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+    }
+
+    .installment-highlight {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 16px;
+      margin-top: 4px;
+    }
+
+    /* Disclaimer styling */
+    .disclaimer {
+      font-size: 0.75rem;
+      text-align: center;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+      padding: 0 8px;
+    }
+
+    /* Footer styling */
+    .studio-footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      margin-top: 8px;
+    }
+
+    .studio-footer a {
+      color: var(--color-accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+
+    .studio-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Animation definition for bounds error shake */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      15%, 45%, 75% { transform: translateX(-6px); }
+      30%, 60%, 90% { transform: translateX(6px); }
+    }
+
+    /* Custom Focus Outline */
+    .dance-input:focus {
+      outline: none;
+    }
+
+    /* Adaptive layouts */
+    @media (max-width: 480px) {
+      .calculator-card {
+        padding: 24px 16px;
+      }
+      
+      .result-val.monthly {
+        font-size: 1.85rem;
+      }
+      
+      .result-val.annual {
+        font-size: 1.15rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator-wrapper">
+    
+    <!-- Logo & Branding Container -->
+    <div class="logo-container">
+      <!-- Standard Image Tag with fallback to styled branding -->
+      <img 
+        src="logo.png" 
+        alt="The Facility Logo" 
+        class="studio-logo" 
+        id="logo-image"
+        onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';"
+      >
+      <!-- Sleek text alternative if logo image is missing -->
+      <div class="logo-fallback" id="logo-fallback">
+        THE <span>FACILITY</span>
+      </div>
+    </div>
+
+    <!-- Calculator Card -->
+    <main class="calculator-card">
+      <header class="card-header">
+        <h1 class="card-title">Tuition Calculator</h1>
+        <p class="card-subtitle">Select the number of dances to calculate your rate</p>
+      </header>
+
+      <form class="calculator-form" id="calculator-form" onsubmit="event.preventDefault();">
+        
+        <!-- Company Dances Input Section -->
+        <div class="input-group" id="group-company">
+          <div class="group-label-area">
+            <div class="group-info">
+              <label for="company-dances" class="group-title">Company Dances</label>
+              <span class="group-price">$800 / dance</span>
+            </div>
+            <span class="group-limit">Max 10</span>
+          </div>
+          
+          <div class="quantity-control">
+            <button 
+              type="button" 
+              class="control-btn decrement" 
+              onclick="adjustCount('company-dances', -1)"
+              aria-label="Decrease company dances"
+            >&minus;</button>
+            <input 
+              type="number" 
+              id="company-dances" 
+              name="company-dances"
+              class="dance-input" 
+              value="0" 
+              min="0" 
+              max="10"
+              autocomplete="off"
+            >
+            <button 
+              type="button" 
+              class="control-btn increment" 
+              onclick="adjustCount('company-dances', 1)"
+              aria-label="Increase company dances"
+            >&plus;</button>
+          </div>
+          
+          <div class="error-text" id="error-company">Please enter a value between 0 and 10.</div>
+          
+          <div class="group-subtotal">
+            <span>Company Subtotal:</span>
+            <span class="group-subtotal-val" id="company-subtotal">$0.00</span>
+          </div>
+        </div>
+
+        <!-- The Force Dances Input Section -->
+        <div class="input-group" id="group-force">
+          <div class="group-label-area">
+            <div class="group-info">
+              <label for="force-dances" class="group-title">The Force Dances</label>
+              <span class="group-price">$600 / dance</span>
+            </div>
+            <span class="group-limit">Max 10</span>
+          </div>
+          
+          <div class="quantity-control">
+            <button 
+              type="button" 
+              class="control-btn decrement" 
+              onclick="adjustCount('force-dances', -1)"
+              aria-label="Decrease Force dances"
+            >&minus;</button>
+            <input 
+              type="number" 
+              id="force-dances" 
+              name="force-dances"
+              class="dance-input" 
+              value="0" 
+              min="0" 
+              max="10"
+              autocomplete="off"
+            >
+            <button 
+              type="button" 
+              class="control-btn increment" 
+              onclick="adjustCount('force-dances', 1)"
+              aria-label="Increase Force dances"
+            >&plus;</button>
+          </div>
+          
+          <div class="error-text" id="error-force">Please enter a value between 0 and 10.</div>
+          
+          <div class="group-subtotal">
+            <span>The Force Subtotal:</span>
+            <span class="group-subtotal-val" id="force-subtotal">$0.00</span>
+          </div>
+        </div>
+
+        <hr class="breakdown-divider">
+
+        <!-- Bold Result Box -->
+        <section class="result-container" aria-live="polite">
+          <div class="result-row">
+            <span class="result-label">Total Annual Cost</span>
+            <span class="result-val annual" id="annual-total">$0.00</span>
+          </div>
+          <div class="result-row installment-highlight">
+            <span class="result-label">Monthly Installment</span>
+            <span class="result-val monthly" id="monthly-installment">$0.00<span>/mo</span></span>
+          </div>
+        </section>
+
+        <!-- Disclaimer -->
+        <p class="disclaimer">
+          Monthly tuition is based on a 9-month season (July 2026 – March 2027).
+        </p>
+
+      </form>
+    </main>
+
+    <footer class="studio-footer">
+      &copy; 2026 The Facility Dance Studio. All rights reserved.
+    </footer>
+  </div>
+
+  <script>
+    // Constants
+    const COMPANY_PRICE = 800;
+    const FORCE_PRICE = 600;
+    const MONTHS = 9;
+    const MAX_DANCES = 10;
+
+    // DOM Elements
+    const companyInput = document.getElementById('company-dances');
+    const forceInput = document.getElementById('force-dances');
+    
+    const companySubtotalEl = document.getElementById('company-subtotal');
+    const forceSubtotalEl = document.getElementById('force-subtotal');
+    const annualTotalEl = document.getElementById('annual-total');
+    const monthlyInstallmentEl = document.getElementById('monthly-installment');
+
+    const groupCompany = document.getElementById('group-company');
+    const groupForce = document.getElementById('group-force');
+    const errorCompany = document.getElementById('error-company');
+    const errorForce = document.getElementById('error-force');
+
+    // Format utility for currency
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(amount);
+    }
+
+    // Main calculation & UI updates
+    function calculateTuition() {
+      let companyVal = parseInt(companyInput.value) || 0;
+      let forceVal = parseInt(forceInput.value) || 0;
+
+      // Ensure inputs are constrained
+      companyVal = Math.max(0, Math.min(MAX_DANCES, companyVal));
+      forceVal = Math.max(0, Math.min(MAX_DANCES, forceVal));
+
+      // Calculate subtotals and totals
+      const companySubtotal = companyVal * COMPANY_PRICE;
+      const forceSubtotal = forceVal * FORCE_PRICE;
+      const annualTotal = companySubtotal + forceSubtotal;
+      const monthlyInstallment = annualTotal / MONTHS;
+
+      // Update Subtotal Displays
+      companySubtotalEl.textContent = formatCurrency(companySubtotal);
+      forceSubtotalEl.textContent = formatCurrency(forceSubtotal);
+
+      // Update Final Values
+      annualTotalEl.textContent = formatCurrency(annualTotal);
+      
+      // Update monthly display with the appropriate HTML layout
+      monthlyInstallmentEl.innerHTML = `${formatCurrency(monthlyInstallment)}<span>/mo</span>`;
+
+      // Update button disabled states based on current values
+      updateButtonStates('company-dances', companyVal);
+      updateButtonStates('force-dances', forceVal);
+    }
+
+    // Handles button clicks (+ / -)
+    function adjustCount(inputId, amount) {
+      const input = document.getElementById(inputId);
+      let currentValue = parseInt(input.value) || 0;
+      let newValue = currentValue + amount;
+
+      // Trigger error animations and clamp if limits exceeded
+      if (newValue > MAX_DANCES) {
+        showValidationError(inputId);
+        newValue = MAX_DANCES;
+      } else if (newValue < 0) {
+        newValue = 0;
+      } else {
+        clearValidationError(inputId);
+      }
+
+      input.value = newValue;
+      calculateTuition();
+    }
+
+    // Input event validation & enforcement (runs when users type)
+    function handleInputValidation(inputEl) {
+      let value = inputEl.value;
+      const inputId = inputEl.id;
+
+      // Check if it's blank first (to allow typing/backspacing)
+      if (value === "") {
+        return;
+      }
+
+      let numericVal = parseInt(value);
+
+      if (isNaN(numericVal)) {
+        inputEl.value = 0;
+        clearValidationError(inputId);
+      } else if (numericVal > MAX_DANCES) {
+        showValidationError(inputId);
+        inputEl.value = MAX_DANCES;
+      } else if (numericVal < 0) {
+        showValidationError(inputId);
+        inputEl.value = 0;
+      } else {
+        clearValidationError(inputId);
+      }
+      
+      calculateTuition();
+    }
+
+    // Empty validation clean up on blur (e.g. if field is left empty, set to 0)
+    function handleBlurCleanUp(inputEl) {
+      if (inputEl.value === "") {
+        inputEl.value = 0;
+        calculateTuition();
+      }
+    }
+
+    // Trigger visual shake and styling on validation boundary breach
+    function showValidationError(inputId) {
+      const isCompany = inputId.includes('company');
+      const groupEl = isCompany ? groupCompany : groupForce;
+      const errorEl = isCompany ? errorCompany : errorForce;
+
+      groupEl.classList.add('has-error');
+      errorEl.style.display = 'block';
+
+      // Remove shake class after animation completes so it can trigger again
+      groupEl.addEventListener('animationend', () => {
+        groupEl.classList.remove('shake');
+      }, { once: true });
+
+      // Add shake class immediately to start animation
+      groupEl.classList.add('shake');
+    }
+
+    // Clear validation error highlights
+    function clearValidationError(inputId) {
+      const isCompany = inputId.includes('company');
+      const groupEl = isCompany ? groupCompany : groupForce;
+      const errorEl = isCompany ? errorCompany : errorForce;
+
+      groupEl.classList.remove('has-error');
+      errorEl.style.display = 'none';
+    }
+
+    // Sync button disabling based on range boundary
+    function updateButtonStates(inputId, currentValue) {
+      const group = inputId.includes('company') ? 'company' : 'force';
+      const decBtn = document.querySelector(`#group-${group} .decrement`);
+      const incBtn = document.querySelector(`#group-${group} .increment`);
+
+      if (decBtn && incBtn) {
+        decBtn.disabled = currentValue <= 0;
+        incBtn.disabled = currentValue >= MAX_DANCES;
+      }
+    }
+
+    // Bind event listeners
+    [companyInput, forceInput].forEach(inputEl => {
+      inputEl.addEventListener('input', () => handleInputValidation(inputEl));
+      inputEl.addEventListener('blur', () => handleBlurCleanUp(inputEl));
+      
+      // Also catch keypress and block 'e', '+', '-', '.' since we only want positive integers
+      inputEl.addEventListener('keydown', (e) => {
+        if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+          e.preventDefault();
+        }
+      });
+    });
+
+    // Initial calculation to set base states
+    calculateTuition();
+  </script>
+</body>
+</html>
+```
